@@ -1,34 +1,24 @@
 import React from 'react';
-import { Text, TextInput, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
+import RNPickerSelect from 'react-native-picker-select';
 
 export default function Input(props) {
     return (
-        <View style={styles.container}>
+        <View>
             <Text style={styles.text}> {props.title}</Text>
-            <View style={styles.container}>
-            <TextInput placeholder={props.value+""} style={styles.textInput} onChangeText={input => props.onChangeText(input)} />
-            <Text style={styles.text}>min</Text>
+            <View>
+            <RNPickerSelect  selectedValue={props.value} style={styles.textInput} 
+            onValueChange={input => props.onChangeText(input)}
+            items={props.items} />
             </View>
         </View>
     )
 }
 
 const styles=StyleSheet.create({
-    container: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingHorizontal: 0,
-        alignItems: 'baseline'
-    },
     text: {
-        fontSize: 20,
-        color: '#58b4ae',
-        
-    },
-    textInput: {
-        width: 30,
-        margin: 10,
-        borderColor: 'gray', 
-        borderWidth: 1 
+        fontSize: 22,
+        color: '#63b7af',
+        fontFamily: 'sans-serif-medium'
     }
 })

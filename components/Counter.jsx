@@ -1,5 +1,10 @@
 import React from 'react'
-import { Text, Vibration, StyleSheet, Button, View } from 'react-native'
+import { Text, Vibration, StyleSheet, View } from 'react-native'
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faStepForward, faPause, faPlay } from '@fortawesome/free-solid-svg-icons'
+import MyButton from './MyButton'
+
+
 
 export class Counter extends React.Component {
     constructor() {
@@ -14,13 +19,14 @@ export class Counter extends React.Component {
         this.setState({
             min: this.props.limit,
             sec: 0,
-        }, ()=>{console.log(this.state.min)})
+        })
     }
     componentWillUnmount() {
         clearInterval(this.interval)
     }
+
     /* Handler functions */
-    inc = () => {
+    decrease = () => {
         if (this.state.sec === 0) {
             if (this.state.min === 0) {
                 Vibration.vibrate([500, 500, 500])
@@ -44,8 +50,8 @@ export class Counter extends React.Component {
             paused: true,
         })
     }
-    handleResume = ()=>{
-        this.interval = setInterval(this.inc, 1000)
+    handlePlay = () => {
+        this.interval = setInterval(this.decrease, 1000)
         this.setState({
             paused: false,
         })
@@ -54,16 +60,27 @@ export class Counter extends React.Component {
         clearInterval(this.interval)
         this.props.handleChildUnmount()
     }
-    
+
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.text}>{(this.state.min < 10 ? '0' : '') + this.state.min + ':' + (this.state.sec < 10 ? '0' : '') + this.state.sec}</Text>
-                <View style={styles.fixToText}>
-                {!this.state.paused?
-                    <Button color="#58b4ae" title='PAUSE' onPress={this.handlePause} />:
-                    <Button color="#58b4ae" title='PLAY' onPress={this.handleResume} />  }
-                    <Button color="#58b4ae" title='SKIP' onPress={this.handleSkip} />  
+            <Text style={styles.title}>{this.props.title}</Text>
+                <View style={styles.count}>
+                    <Text style={styles.text}>{(this.state.min < 10 ? '0' : '') + this.state.min + ':' + (this.state.sec < 10 ? '0' : '') + this.state.sec}</Text>
+                </View>
+                <View>
+                    {!this.state.paused ?
+                        <MyButton title='PAUSE' onPress={this.handlePause}
+                            icon={<FontAwesomeIcon icon={faPause} size={14} style={styles.icon} />}
+                        /> :
+                        <MyButton title='PLAY' onPress={this.handlePlay}
+                            icon={<FontAwesomeIcon icon={faPlay} size={14} style={styles.icon} />}
+                        />}
+
+                    <MyButton title='SKIP' onPress={this.handleSkip}
+                        icon={<FontAwesomeIcon icon={faStepForward} size={14} style={styles.icon} />}
+                    />
+
                 </View>
             </View>
         )
@@ -73,20 +90,35 @@ export class Counter extends React.Component {
 const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
-        height: 220,
-        paddingHorizontal: 20,
+    },
+    count: {
+        height: 250,
+        width: 250,
+        borderRadius: 250,
         borderColor: '#58b4ae',
-        borderWidth: 1,
+        borderWidth: 4,
+        borderStyle: 'dotted',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: 'sans-serif-medium',
+        marginBottom: 30,
+        marginTop: 50,
+    },
+    icon: {
+        color: '#eeaeca',
+        marginHorizontal: 20,
+        marginVertical: 10,
     },
     text: {
-        fontSize: 50,
+        fontSize: 65,
         paddingHorizontal: 5,
         paddingBottom: 10,
-        color: '#58b4ae'
+        color: '#58b4ae',
+        fontFamily: 'sans-serif-medium'
     },
-    fixToText: {
-        
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    title: {
+        fontSize: 40,
+        color: '#58b4ae',
+        textAlign: 'center'
     }
 })

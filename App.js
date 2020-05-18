@@ -1,7 +1,11 @@
 import React from 'react';
-import { StyleSheet, Button, View } from 'react-native';
+import { StyleSheet, View } from 'react-native'
+import Constants from 'expo-constants'
 import { Counter } from './components/Counter'
-import Input from './components/Input'
+import Settings from './components/Settings'
+import Done from './components/Done'
+import { LinearGradient } from 'expo-linear-gradient';
+import { Dimensions } from 'react-native'
 
 export default class App extends React.Component {
   constructor() {
@@ -11,21 +15,39 @@ export default class App extends React.Component {
       renderSettings: true,
       workInterval: 25,
       break: 5,
+      num: 10,
       isNowWork: true,
+      done: false,
     }
   }
+
+  // Titles
+  titleWork = 'Work session'
+  titleBreak = 'Break'
+
+  //Handler Functions
   handleChildUnmount = () => {
-    this.setState({renderCounter: false})
+    this.setState({ renderCounter: false })
     this.switch()
   }
   switch = () => {
-    this.setState(prev => ({ isNowWork: !prev.isNowWork }))
-    setTimeout(
-      function () {
-        this.setState({renderCounter: true})
+    if (this.state.num - 1 > 0) {
+      this.setState(prev => ({ isNowWork: !prev.isNowWork }))
+      setTimeout(
+        function () {
+          this.setState({ renderCounter: true })
         }.bind(this),
         0)
-        console.log(this.state.renderCounter)
+      if (!this.state.isNowWork) {
+        this.setState(prev => ({
+          num: prev.num - 1
+        }))
+      }
+    } else {
+      this.setState({
+        done: true
+      })
+    }
   }
   onChangeInterval = (input) => {
     this.setState({ workInterval: input })
@@ -33,21 +55,39 @@ export default class App extends React.Component {
   onChangeBreak = (input) => {
     this.setState({ break: input })
   }
-  handlePress = () => {
+  onChangeNum = (input) => {
+    this.setState({ num: input })
+  }
+  handleSubmit = () => {
     this.setState({ renderSettings: false });
     this.setState({ renderCounter: true });
   }
+
+  windowHeight = Dimensions.get('window').height
+
   render() {
     return (
       <View style={styles.container}>
+        <LinearGradient
+          colors={['rgba(238,174,202,0.8)', '#def4f0']}
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            top: 0,
+            height: this.windowHeight,
+          }}
+        />
         {this.state.renderCounter &&
-          <Counter limit={this.state.isNowWork ? this.state.workInterval : this.state.break} handleChildUnmount={this.handleChildUnmount} />}
+          <Counter title={this.state.isNowWork ? this.titleWork : this.titleBreak} 
+          limit={this.state.isNowWork ? this.state.workInterval : this.state.break} 
+          handleChildUnmount={this.handleChildUnmount} />}
         {this.state.renderSettings &&
-          <View style={styles.settings}>
-            <Input value={this.state.workInterval} title='Working interval' onChangeText={this.onChangeInterval} />
-            <Input value={this.state.break} title='Break' onChangeText={this.onChangeBreak} />
-            <Button color="#58b4ae" title='Submit' onPress={this.handlePress} />
-          </View>}
+          <Settings num={this.state.num} workInterval={this.state.workInterval} break={this.state.break} 
+          onChangeNum={this.onChangeNum} onChangeInterval={this.onChangeInterval} onChangeBreak={this.onChangeBreak} 
+          handleSubmit={this.handleSubmit} />}
+        {this.state.done &&
+          <Done />}
       </View>
     )
   }
@@ -57,15 +97,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     flex: 1,
-    backgroundColor: 'rgba(241, 235, 187,0.5)',
+    marginTop: Constants.statusBarHeight + 4,
     justifyContent: 'center',
-    
   },
-  settings: {
-    height: 220,
-        paddingHorizontal: 20,
-        borderColor: '#58b4ae',
-        borderWidth: 1,
-        justifyContent: 'space-evenly'
-  }
 });

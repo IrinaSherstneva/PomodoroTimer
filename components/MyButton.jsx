@@ -1,29 +1,19 @@
-import React from 'react';
-import { TouchableHighlight, View, Text, StyleSheet } from 'react-native';
+import React from 'react'
+import { View, StyleSheet } from 'react-native'
+import { Button } from 'react-native-elements'
 
 export default function MyButton(props) {
     return (
-        <TouchableHighlight onPress={props.handlePress}>
-            {/* <View style={styles.button}> */}
-                {/* <Text>{props.icon}</Text> */}
-                <Text style={styles.text}>{props.title}</Text>
-            {/* </View> */}
-        </TouchableHighlight>
+        <View>
+        <Button buttonStyle={styles.button} onPress={props.onPress} title={props.title} icon={props.icon} />
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     button: {
-        margin: 10,
-        alignItems: "center",
-        backgroundColor: "#DDDDDD",
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-evenly',
-        padding: 1,
-        // borderWidth: 1
-    },
-    text: {
-        margin: 10,
+        backgroundColor: '#af8baf',
+        padding: 15,
+        marginVertical: 12,
     }
 })
